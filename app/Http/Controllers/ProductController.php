@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Product as ProductResource;
 use App\Http\Controllers\API\BaseController as BaseController;
