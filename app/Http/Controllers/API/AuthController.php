@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -66,18 +67,52 @@ class AuthController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
+    // public function login(Request $request)
+    // {
+    //     if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+    //         $user = Auth::user();
+    //         $success['name'] =  $user->name;
+    //         $success['email'] =  $user->email;
+    //         $success['token'] =  $user->createToken('MyApp')->plainTextToken;
+
+    //         return $this->sendResponse($success, 'User login successfully.');
+    //     }
+    //     else{
+    //         return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+    //     }
+    // }
+
     public function login(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-            $user = Auth::user();
-            $success['name'] =  $user->name;
-            $success['email'] =  $user->email;
-            $success['token'] =  $user->createToken('MyApp')->plainTextToken;
+        try {
+            $request->validate([
+                'email' => 'email|required',
+                'password' => 'required'
+            ]);
 
-            return $this->sendResponse($success, 'User login successfully.');
-        }
-        else{
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+            $credentials = request(['email', 'password']);
+            if (!Auth::attempt($credentials)) {
+                return  $this->error([
+                    'message' => 'Unauthorized'
+                ],'Authentication Failed', 500);
+            }
+
+            $user = User::where('email', $request->email)->first();
+            if ( ! Hash::check($request->password, $user->password, [])) {
+                throw new \Exception('Invalid Credentials');
+            }
+
+            $tokenResult = $user->createToken('authToken')->plainTextToken;
+            return  $this->success([
+                'access_token' => $tokenResult,
+                'token_type' => 'Bearer',
+                'user' => $user
+            ],'Authenticated');
+        } catch (Exception $error) {
+            return  $this->error([
+                'message' => 'Something went wrong',
+                'error' => $error,
+            ],'Authentication Failed', 500);
         }
     }
     // public function login(Request $request)
@@ -95,12 +130,38 @@ class AuthController extends BaseController
     //     return response()
     //         ->json(['message' => 'Hi '.$user->name.', welcome to home','access_token' => $token, 'token_type' => 'Bearer', ]);
     // }
-    public function logout()
+    public function logout(Request $request)
     {
-        auth()->user()->tokens()->delete();
+        // auth()->user()->tokens()->delete();
 
-        return [
-            'message' => 'You have successfully logged out and the token was successfully deleted'
-        ];
+        // return [
+        //     'message' => 'You have successfully logged out and the token was successfully deleted'
+        // ];
+        $token = $request->user()->currentAccessToken()->delete();
+
+        return $this->success($token,'Token Revoked');
     }
+
+    // public function updatePhoto(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'file' => 'required|image|max:2048',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return $this->error(['error'=>$validator->errors()], 'Update Photo Fails', 401);
+    //     }
+
+    //     if ($request->file('file')) {
+
+    //         $file = $request->file->store('assets/user', 'public');
+
+    //         //store your file into database
+    //         $user = Auth::user();
+    //         $user->profile_photo_path = $file;
+    //         $user->update();
+
+    //         return $this->success([$file],'File successfully uploaded');
+    //     }
+    // }
 }

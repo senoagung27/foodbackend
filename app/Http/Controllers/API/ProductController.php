@@ -15,7 +15,7 @@ class ProductController extends BaseController
     {
         $products = Product::all();
 
-        return $this->sendResponse(ProductResource::collection($products), 'Products retrieved successfully.');
+        return $this->success(ProductResource::collection($products), 'Products retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
@@ -38,7 +38,7 @@ class ProductController extends BaseController
 
         $product = Product::create($input);
 
-        return $this->sendResponse(new ProductResource($product), 'Product created successfully.');
+        return $this->success(new ProductResource($product), 'Product created successfully.');
     }
 
     /**
@@ -55,7 +55,7 @@ class ProductController extends BaseController
             return $this->sendError('Product not found.');
         }
 
-        return $this->sendResponse(new ProductResource($product), 'Product retrieved successfully.');
+        return $this->success(new ProductResource($product), 'Product retrieved successfully.');
     }
 
     /**
@@ -75,14 +75,14 @@ class ProductController extends BaseController
         ]);
 
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $this->error('Validation Error.', $validator->errors());
         }
 
         $product->name = $input['name'];
         $product->detail = $input['detail'];
         $product->save();
 
-        return $this->sendResponse(new ProductResource($product), 'Product updated successfully.');
+        return $this->success(new ProductResource($product), 'Product updated successfully.');
     }
 
     /**
@@ -95,6 +95,6 @@ class ProductController extends BaseController
     {
         $product->delete();
 
-        return $this->sendResponse([], 'Product deleted successfully.');
+        return $this->success([], 'Product deleted successfully.');
     }
 }
