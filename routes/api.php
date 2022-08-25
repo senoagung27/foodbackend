@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\FoodController;
 use App\Http\Controllers\API\ProductController;
 
 /*
@@ -29,6 +30,8 @@ Route::prefix('/v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     //API route for login user
     Route::post('/login', [AuthController::class, 'login']);
+
+    Route::get('food', [FoodController::class, 'all']);
 
     Route::middleware('auth:sanctum')->group( function () {
         Route::resource('products', ProductController::class);
