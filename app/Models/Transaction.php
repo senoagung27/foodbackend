@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Food extends Model
+class Transaction extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -38,10 +38,7 @@ class Food extends Model
     {
         return config('app.url') . Storage::url($this->attributes['picturePath']);
     }
-
     protected static function boot() {
-
-        parent::boot();
         static::creating(function ($model) {
             if ( ! $model->getKey()) {
                 $model->{$model->getKeyName()} = (string) Str::uuid();
@@ -58,5 +55,4 @@ class Food extends Model
     {
         return 'string';
     }
-
 }
