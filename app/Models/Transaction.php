@@ -39,6 +39,7 @@ class Transaction extends Model
         return config('app.url') . Storage::url($this->attributes['picturePath']);
     }
     protected static function boot() {
+        parent::boot();
         static::creating(function ($model) {
             if ( ! $model->getKey()) {
                 $model->{$model->getKeyName()} = (string) Str::uuid();

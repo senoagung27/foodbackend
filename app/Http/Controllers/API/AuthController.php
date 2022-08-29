@@ -16,9 +16,9 @@ class AuthController extends BaseController
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => $this->passwordRules()
         ]);
 
         if($validator->fails()){
@@ -29,15 +29,19 @@ class AuthController extends BaseController
         $input['password'] = bcrypt($input['password']);
         // $user = User::create($input);
         $user = User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password)
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'address' => $request->address,
+                        'houseNumber' => $request->houseNumber,
+                        'phoneNumber' => $request->phoneNumber,
+                        'city' => $request->city,
+                        'password' => Hash::make($request->password),
                  ]);
         $success['token'] =  $user->createToken('MyApp')->plainTextToken;
         $success['name'] =  $user->name;
         $success['email'] =  $user->email;
 
-        return $this->sendResponse($success, 'User register successfully.');
+        return $this->success($success, 'User register successfully.');
     }
     // public function register(Request $request)
     // {
