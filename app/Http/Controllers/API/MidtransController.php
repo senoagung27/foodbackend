@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Midtrans\Config;
 use Midtrans\Notification;
 use App\Models\Transaction;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\BaseController as BaseController;
 
 class MidtransController extends Controller
 {
@@ -13,7 +15,7 @@ class MidtransController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function callback(Request $request)s
+    public function callback(Request $request)
     {
         // Set konfigurasi midtrans
         Config::$serverKey = config('services.midtrans.serverKey');

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\FoodController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\MidtransController;
 use App\Http\Controllers\API\TransactionController;
 
 /*
@@ -34,14 +35,17 @@ Route::prefix('/v1')->group(function () {
 
     Route::get('food', [FoodController::class, 'all']);
 
+    Route::post('midtrans/callback', [MidtransController::class, 'callback']);
+
     Route::middleware('auth:sanctum')->group( function () {
         Route::resource('products', ProductController::class);
         Route::get('transaction', [TransactionController::class, 'all']);
         Route::post('transaction/{id}', [TransactionController::class, 'update']);
+        Route::post('checkout', [TransactionController::class, 'checkout']);
+        Route::post('logout', [UserController::class, 'logout']);
         Route::get('/profile', function(Request $request) {
             return auth()->user();
         });
-
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 });
