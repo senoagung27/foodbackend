@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Food;
 use Illuminate\Http\Request;
+use App\Http\Requests\FoodRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\API\BaseController as BaseController;
 
@@ -63,5 +64,43 @@ class FoodController extends BaseController
             $food->paginate($limit),
             'Data list produk berhasil diambil'
         );
+    }
+    public function store(FoodRequest $request)
+    {
+        // $data = $request->all();
+        $data = Food::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'ingredients' => $request->ingredients,
+            'price' => $request->price,
+            'rate' => $request->rate,
+            'picturePath' => ''
+        ]);
+
+        $data['picturePath'] = $request->file('picturePath')->store('assets/food', 'public');
+
+        Food::create($data);
+
+        return redirect()->route('food.index');
+    }
+    public function update(Request $request, Food $food)
+    {
+        $data = $request->all();
+
+        if($request->file('picturePath'))
+        {
+            $data['picturePath'] = $request->file('picturePath')->store('assets/food', 'public');
+        }
+
+        $food->update($data);
+
+        // return redirect()->route('food.index');
+        return $this->success($food, 'Update Data Food Berhasil');
+    }
+    public function destroy(Food $food)
+    {
+        $food->delete();
+
+        return redirect()->route('food.index');
     }
 }
