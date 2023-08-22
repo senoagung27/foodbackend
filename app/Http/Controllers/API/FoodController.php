@@ -81,7 +81,8 @@ class FoodController extends BaseController
 
         Food::create($data);
 
-        return redirect()->route('food.index');
+        // return redirect()->route('food.index');
+        return $this->success($data, 'Data Food Berhasil Dibuat');
     }
     public function update(Request $request, Food $food)
     {
