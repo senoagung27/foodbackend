@@ -33,12 +33,20 @@ Route::prefix('/v1')->group(function () {
     //API route for login user
     Route::post('/login', [AuthController::class, 'login']);
 
-    Route::get('food', [FoodController::class, 'all']);
+
 
     Route::post('midtrans/callback', [MidtransController::class, 'callback']);
 
     Route::middleware('auth:sanctum')->group( function () {
-        Route::resource('products', ProductController::class);
+
+        Route::get('food', [FoodController::class, 'all']);
+        Route::post('food/create', [FoodController::class, 'store']);
+        Route::put('food/update/{id}', [FoodController::class, 'update']);
+        Route::get('food/detail/{id}', [FoodController::class, 'show']);
+        Route::delete('food/delete/{id}', [FoodController::class, 'destroy']);
+
+
+        // Route::resource('products', ProductController::class);
         Route::get('transaction', [TransactionController::class, 'all']);
         Route::post('transaction/{id}', [TransactionController::class, 'update']);
         Route::post('checkout', [TransactionController::class, 'checkout']);

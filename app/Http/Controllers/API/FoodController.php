@@ -68,14 +68,16 @@ class FoodController extends BaseController
     public function store(FoodRequest $request)
     {
         // $data = $request->all();
-        $data = Food::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'ingredients' => $request->ingredients,
-            'price' => $request->price,
-            'rate' => $request->rate,
-            'picturePath' => ''
-        ]);
+        // $data = Food::create([
+        //     'name' => $request->name,
+        //     'description' => $request->description,
+        //     'ingredients' => $request->ingredients,
+        //     'price' => $request->price,
+        //     'rate' => $request->rate,
+        //     'type' => $request->type,
+        //     'picturePath' => ''
+        // ]);
+        $data = $request->all();
 
         $data['picturePath'] = $request->file('picturePath')->store('assets/food', 'public');
 
@@ -83,6 +85,15 @@ class FoodController extends BaseController
 
         // return redirect()->route('food.index');
         return $this->success($data, 'Data Food Berhasil Dibuat');
+    }
+    public function show($id)
+    {
+        $food = Food::find($id);
+
+        if (is_null($food)) {
+            return $this->error('Data list makanan ini tidak berhasil diambil');
+        }
+        return  $this->success($food,'Data list makanan berhasil diambil');
     }
     public function update(Request $request, Food $food)
     {
@@ -92,8 +103,17 @@ class FoodController extends BaseController
         {
             $data['picturePath'] = $request->file('picturePath')->store('assets/food', 'public');
         }
+        // dd($data);
 
-        $food->update($data);
+        $food->name = $request->name;
+        $food->description = $request->description;
+        $food->ingredients = $request->ingredients;
+        $food->price = $request->price;
+        $food->rate = $request->rate;
+        $food->types = $request->types;
+        $food->picturePath = $request->picturePath;
+        $food->save();
+        // $food->update($data);
 
         // return redirect()->route('food.index');
         return $this->success($food, 'Update Data Food Berhasil');
